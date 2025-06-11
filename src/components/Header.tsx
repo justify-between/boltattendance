@@ -1,7 +1,7 @@
-import React from 'react';
-import { Clock, GraduationCap, User, LogOut } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { Profile } from '../types';
+import React from "react";
+import { Clock, GraduationCap, User, LogOut } from "lucide-react";
+import { supabase } from "../lib/supabase";
+import { Profile } from "../types";
 
 interface HeaderProps {
   profile: Profile;
@@ -21,21 +21,25 @@ export const Header: React.FC<HeaderProps> = ({ profile, currentTime }) => {
             <GraduationCap className="h-8 w-8" />
             <div>
               <h1 className="text-xl font-bold">Campus Attendance</h1>
-              <p className="text-sm text-indigo-200">University Management System</p>
+              <p className="text-sm text-indigo-200">
+                University Management System
+              </p>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-2 bg-white/10 px-3 py-2 rounded-lg">
               <Clock className="h-4 w-4" />
               <span className="text-sm font-medium">{currentTime}</span>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <User className="h-5 w-5" />
               <div className="text-right">
                 <p className="text-sm font-medium">{profile.full_name}</p>
-                <p className="text-xs text-indigo-200 capitalize">{profile.role}</p>
+                <p className="text-xs text-indigo-200 capitalize">
+                  {profile.role}
+                </p>
               </div>
             </div>
 

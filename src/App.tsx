@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from './lib/supabase';
-import { AuthForm } from './components/AuthForm';
-import { Header } from './components/Header';
-import { StudentDashboard } from './components/StudentDashboard';
-import { LecturerDashboard } from './components/LecturerDashboard';
-import { useCurrentTime } from './hooks/useCurrentTime';
-import { Profile } from './types';
+import React, { useState, useEffect } from "react";
+import { supabase } from "./lib/supabase";
+import { AuthForm } from "./components/AuthForm";
+import { Header } from "./components/Header";
+import { StudentDashboard } from "./components/StudentDashboard";
+import { LecturerDashboard } from "./components/LecturerDashboard";
+import { useCurrentTime } from "./hooks/useCurrentTime";
+import { Profile } from "./types";
 
 function App() {
   const { currentTime, formattedTime } = useCurrentTime();
@@ -25,11 +25,13 @@ function App() {
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session) {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session) {
         setIsAuthenticated(true);
         await fetchProfile(session.user.id);
-      } else if (event === 'SIGNED_OUT') {
+      } else if (event === "SIGNED_OUT") {
         setIsAuthenticated(false);
         setProfile(null);
         setIsLoading(false);
@@ -42,23 +44,23 @@ function App() {
   const fetchProfile = async (userId: string) => {
     try {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
         .single();
 
       if (error) throw error;
       setProfile(data);
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error("Error fetching profile:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleAuthSuccess = () => {
-    // Auth state change will be handled by the listener
-  };
+  // const handleAuthSuccess = () => {
+  //   // Auth state change will be handled by the listener
+  // };
 
   if (isLoading) {
     return (
@@ -69,27 +71,18 @@ function App() {
   }
 
   if (!isAuthenticated || !profile) {
-    return <AuthForm onAuthSuccess={handleAuthSuccess} />;
+    return <AuthForm onAuthSuccess={() => console.log("Authenticated")} />;
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      <Header 
-        profile={profile}
-        currentTime={formattedTime}
-      />
-      
+      <Header profile={profile} currentTime={formattedTime} />
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {profile.role === 'student' ? (
-          <StudentDashboard
-            currentTime={currentTime}
-            profile={profile}
-          />
+        {profile.role === "student" ? (
+          <StudentDashboard currentTime={currentTime} profile={profile} />
         ) : (
-          <LecturerDashboard
-            currentTime={currentTime}
-            profile={profile}
-          />
+          <LecturerDashboard currentTime={currentTime} profile={profile} />
         )}
       </main>
 

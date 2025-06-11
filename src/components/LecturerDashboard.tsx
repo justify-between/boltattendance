@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Users, Calendar, TrendingUp, BookOpen } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { Lecture, Profile } from '../types';
-import { CreateLectureForm } from './CreateLectureForm';
-import { LectureCard } from './LectureCard';
+import React, { useState, useEffect } from "react";
+import { Plus, Users, Calendar, TrendingUp, BookOpen } from "lucide-react";
+import { supabase } from "../lib/supabase";
+import { Lecture, Profile } from "../types";
+import { CreateLectureForm } from "./CreateLectureForm";
+import { LectureCard } from "./LectureCard";
+import toast from "react-hot-toast";
 
 interface LecturerDashboardProps {
   currentTime: Date;
@@ -12,7 +13,7 @@ interface LecturerDashboardProps {
 
 export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
   currentTime,
-  profile
+  profile,
 }) => {
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,51 +25,73 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
 
   const fetchLectures = async () => {
     try {
+      // First get lectures without the join
       const { data: lecturesData, error: lecturesError } = await supabase
-        .from('lectures')
-        .select(`
-          *,
-          lecturer:profiles!lectures_lecturer_id_fkey(full_name)
-        `)
-        .eq('lecturer_id', profile.id)
-        .order('date', { ascending: false })
-        .order('start_time', { ascending: false });
+        .from("lectures")
+        .select("*")
+        .eq("lecturer_id", profile.id)
+        .order("date", { ascending: false })
+        .order("start_time", { ascending: false });
 
       if (lecturesError) throw lecturesError;
 
-      // Get enrollment and attendance counts for each lecture
-      const lectureIds = lecturesData?.map(l => l.id) || [];
-      
+      // Get lecturer names separately
+      const lecturerIds =
+        lecturesData
+          ?.map((l) => l.lecturer_id)
+          .filter((v, i, a) => a.indexOf(v) === i) || [];
+
+      const { data: lecturersData } = await supabase
+        .from("profiles")
+        .select("id, full_name")
+        .in("id", lecturerIds);
+
+      const lecturerMap = new Map(
+        lecturersData?.map((l) => [l.id, l.full_name]) || []
+      );
+
+      // Get enrollment and attendance counts
+      const lectureIds = lecturesData?.map((l) => l.id) || [];
+
       const { data: enrollmentCounts } = await supabase
-        .from('lecture_enrollments')
-        .select('lecture_id')
-        .in('lecture_id', lectureIds);
+        .from("lecture_enrollments")
+        .select("lecture_id")
+        .in("lecture_id", lectureIds);
 
       const { data: attendanceCounts } = await supabase
-        .from('attendance_records')
-        .select('lecture_id')
-        .in('lecture_id', lectureIds);
+        .from("attendance_records")
+        .select("lecture_id")
+        .in("lecture_id", lectureIds);
 
       const enrollmentMap = new Map();
       const attendanceMap = new Map();
 
-      enrollmentCounts?.forEach(enrollment => {
-        enrollmentMap.set(enrollment.lecture_id, (enrollmentMap.get(enrollment.lecture_id) || 0) + 1);
+      enrollmentCounts?.forEach((enrollment) => {
+        enrollmentMap.set(
+          enrollment.lecture_id,
+          (enrollmentMap.get(enrollment.lecture_id) || 0) + 1
+        );
       });
 
-      attendanceCounts?.forEach(attendance => {
-        attendanceMap.set(attendance.lecture_id, (attendanceMap.get(attendance.lecture_id) || 0) + 1);
+      attendanceCounts?.forEach((attendance) => {
+        attendanceMap.set(
+          attendance.lecture_id,
+          (attendanceMap.get(attendance.lecture_id) || 0) + 1
+        );
       });
 
-      const enrichedLectures = lecturesData?.map(lecture => ({
-        ...lecture,
-        enrollment_count: enrollmentMap.get(lecture.id) || 0,
-        attendance_count: attendanceMap.get(lecture.id) || 0
-      })) || [];
+      const enrichedLectures =
+        lecturesData?.map((lecture) => ({
+          ...lecture,
+          lecturer_name: lecturerMap.get(lecture.lecturer_id) || "Unknown",
+          enrollment_count: enrollmentMap.get(lecture.id) || 0,
+          attendance_count: attendanceMap.get(lecture.id) || 0,
+        })) || [];
 
       setLectures(enrichedLectures);
     } catch (error) {
-      console.error('Error fetching lectures:', error);
+      console.error("Error fetching lectures:", error);
+      toast.error("Failed to load lectures");
     } finally {
       setIsLoading(false);
     }
@@ -79,24 +102,39 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
   };
 
   const today = new Date().toDateString();
-  const todayLectures = lectures.filter(lecture => 
-    new Date(lecture.date).toDateString() === today
+  const todayLectures = lectures.filter(
+    (lecture) => new Date(lecture.date).toDateString() === today
   );
 
-  const ongoingLectures = todayLectures.filter(lecture => {
+  const ongoingLectures = todayLectures.filter((lecture) => {
     const lectureStart = new Date(`${lecture.date} ${lecture.start_time}`);
     const lectureEnd = new Date(`${lecture.date} ${lecture.end_time}`);
     return currentTime >= lectureStart && currentTime <= lectureEnd;
   });
 
-  const totalEnrollments = lectures.reduce((total, lecture) => total + (lecture.enrollment_count || 0), 0);
-  const totalAttendance = lectures.reduce((total, lecture) => total + (lecture.attendance_count || 0), 0);
-  const averageAttendance = totalEnrollments > 0 ? Math.round((totalAttendance / totalEnrollments) * 100) : 0;
+  const totalEnrollments = lectures.reduce(
+    (total, lecture) => total + (lecture.enrollment_count || 0),
+    0
+  );
+  const totalAttendance = lectures.reduce(
+    (total, lecture) => total + (lecture.attendance_count || 0),
+    0
+  );
+  const averageAttendance =
+    totalEnrollments > 0
+      ? Math.round((totalAttendance / totalEnrollments) * 100)
+      : 0;
 
-  const upcomingLectures = lectures.filter(lecture => {
-    const lectureStart = new Date(`${lecture.date} ${lecture.start_time}`);
-    return lectureStart > currentTime;
-  }).sort((a, b) => new Date(`${a.date} ${a.start_time}`).getTime() - new Date(`${b.date} ${b.start_time}`).getTime());
+  const upcomingLectures = lectures
+    .filter((lecture) => {
+      const lectureStart = new Date(`${lecture.date} ${lecture.start_time}`);
+      return lectureStart > currentTime;
+    })
+    .sort(
+      (a, b) =>
+        new Date(`${a.date} ${a.start_time}`).getTime() -
+        new Date(`${b.date} ${b.start_time}`).getTime()
+    );
 
   if (isLoading) {
     return (
@@ -110,8 +148,13 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Lecturer Dashboard</h2>
-          <p className="text-gray-600">Welcome back, {profile.full_name}! Manage your lectures and track student attendance.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Lecturer Dashboard
+          </h2>
+          <p className="text-gray-600">
+            Welcome back, {profile.full_name}! Manage your lectures and track
+            student attendance.
+          </p>
         </div>
         <button
           onClick={() => setShowCreateForm(true)}
@@ -127,7 +170,9 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
         <div className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-xl p-6 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-indigo-100 text-sm font-medium">Total Lectures</p>
+              <p className="text-indigo-100 text-sm font-medium">
+                Total Lectures
+              </p>
               <p className="text-2xl font-bold">{lectures.length}</p>
             </div>
             <BookOpen className="h-8 w-8 text-indigo-200" />
@@ -137,7 +182,9 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
         <div className="bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-xl p-6 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-emerald-100 text-sm font-medium">Today's Classes</p>
+              <p className="text-emerald-100 text-sm font-medium">
+                Today's Classes
+              </p>
               <p className="text-2xl font-bold">{todayLectures.length}</p>
             </div>
             <Calendar className="h-8 w-8 text-emerald-200" />
@@ -160,7 +207,9 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
         <div className="bg-gradient-to-br from-rose-500 to-pink-600 text-white rounded-xl p-6 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-rose-100 text-sm font-medium">Attendance Rate</p>
+              <p className="text-rose-100 text-sm font-medium">
+                Attendance Rate
+              </p>
               <p className="text-2xl font-bold">{averageAttendance}%</p>
             </div>
             <Users className="h-8 w-8 text-rose-200" />
@@ -176,34 +225,51 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
             Classes In Progress
           </h3>
           <div className="grid gap-6 md:grid-cols-2">
-            {ongoingLectures.map(lecture => (
-              <div key={lecture.id} className="bg-white rounded-xl p-6 shadow-md border border-green-100">
+            {ongoingLectures.map((lecture) => (
+              <div
+                key={lecture.id}
+                className="bg-white rounded-xl p-6 shadow-md border border-green-100"
+              >
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-900">{lecture.course_name}</h4>
-                    <p className="text-indigo-600 font-medium">{lecture.course_code}</p>
+                    <h4 className="text-lg font-semibold text-gray-900">
+                      {lecture.course_name}
+                    </h4>
+                    <p className="text-indigo-600 font-medium">
+                      {lecture.course_code}
+                    </p>
                   </div>
                   <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full animate-pulse">
                     Live Now
                   </span>
                 </div>
-                
+
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Students Enrolled:</span>
-                    <span className="font-bold text-blue-700">{lecture.enrollment_count}</span>
+                    <span className="text-sm text-gray-600">
+                      Students Enrolled:
+                    </span>
+                    <span className="font-bold text-blue-700">
+                      {lecture.enrollment_count}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Present:</span>
-                    <span className="font-bold text-green-700">{lecture.attendance_count}</span>
+                    <span className="font-bold text-green-700">
+                      {lecture.attendance_count}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Location:</span>
-                    <span className="font-medium text-gray-900">{lecture.location}</span>
+                    <span className="font-medium text-gray-900">
+                      {lecture.location}
+                    </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-600">Time:</span>
-                    <span className="font-medium text-gray-900">{lecture.start_time} - {lecture.end_time}</span>
+                    <span className="font-medium text-gray-900">
+                      {lecture.start_time} - {lecture.end_time}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -214,7 +280,9 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
 
       {/* Upcoming Lectures */}
       <div>
-        <h3 className="text-xl font-bold text-gray-900 mb-6">Upcoming Lectures</h3>
+        <h3 className="text-xl font-bold text-gray-900 mb-6">
+          Upcoming Lectures
+        </h3>
         {upcomingLectures.length === 0 ? (
           <div className="bg-gray-50 rounded-xl p-8 text-center">
             <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -228,7 +296,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {upcomingLectures.slice(0, 6).map(lecture => (
+            {upcomingLectures.slice(0, 6).map((lecture) => (
               <LectureCard
                 key={lecture.id}
                 lecture={lecture}
@@ -243,9 +311,11 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
       {/* Recent Lectures */}
       {lectures.length > 0 && (
         <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-6">Recent Lectures</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-6">
+            Recent Lectures
+          </h3>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {lectures.slice(0, 6).map(lecture => (
+            {lectures.slice(0, 6).map((lecture) => (
               <LectureCard
                 key={lecture.id}
                 lecture={lecture}
