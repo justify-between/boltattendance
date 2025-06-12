@@ -30,7 +30,7 @@ export const Header: React.FC<HeaderProps> = ({ profile, currentTime }) => {
   return (
     <header className="bg-[#D496A7] text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+        <div className="flex justify-between items-center py-4 overflow-x-auto">
           <div className="flex items-center space-x-3">
             <GraduationCap className="h-8 w-8" />
             <div>
