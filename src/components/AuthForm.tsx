@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
+
 import {
   GraduationCap,
   User,
@@ -14,6 +16,37 @@ import { supabase } from "../lib/supabase";
 interface AuthFormProps {
   onAuthSuccess: () => void;
 }
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
+
+const leftSlideIn = {
+  hidden: { opacity: 0, x: -50 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.5 } },
+};
+
+const rightSlideIn = {
+  hidden: { opacity: 0, x: 50 },
+  show: { opacity: 1, x: 0, transition: { duration: 0.5 } },
+};
+
+const scaleUp = {
+  hidden: { opacity: 0, scale: 0.8 },
+  show: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
+};
 
 const InputField = ({
   icon: Icon,
@@ -148,31 +181,76 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 flex items-center justify-center p-4">
-      {/* <a href="https://bolt.new" target="_blank" rel="noopener noreferrer">
+    <div className="min-h-screen bg-[#F1DEDE] flex items-center justify-center p-4">
+      {/* <motion.a
+        href="https://bolt.new"
+        target="_blank"
+        rel="noopener noreferrer"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
         <img
           width={80}
           height={80}
           src="/black_circle.png"
           alt="Click to visit Bolt"
-          className="absolute top-4 right-4  cursor-pointer transition-transform duration-300 hover:rotate-180"
+          className="absolute top-4 right-4 cursor-pointer transition-transform duration-300 hover:rotate-180"
         />
-      </a> */}
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <GraduationCap className="h-16 w-16 text-indigo-600 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Campus Attendance
-          </h1>
-          <p className="text-gray-600">
-            {isLogin ? "Sign in to your account" : "Create your account"}
-          </p>
-        </div>
+      </motion.a> */}
+      <motion.a
+        href="https://github.com/justify-between"
+        target="_blank"
+        rel="noopener noreferrer"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <img
+          width={80}
+          height={80}
+          src="/black_circle.png"
+          alt="Click to visit Bolt"
+          className="absolute top-4 right-4 cursor-pointer transition-transform duration-300 hover:rotate-180"
+        />
+      </motion.a>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <motion.div
+        className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div
+          className="text-center mb-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
+          <motion.div variants={scaleUp}>
+            <GraduationCap className="h-16 w-16 text-[#D496A7] mx-auto mb-4" />
+          </motion.div>
+          <motion.h1
+            className="text-3xl font-bold text-gray-900 mb-2"
+            variants={leftSlideIn}
+          >
+            Bolt Attendance ⚡️
+          </motion.h1>
+          <motion.p className="text-gray-600" variants={rightSlideIn}>
+            {isLogin ? "Sign in to your account" : "Create your account"}
+          </motion.p>
+        </motion.div>
+
+        <motion.form
+          onSubmit={handleSubmit}
+          className="space-y-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
           {!isLogin && (
             <>
-              <div>
+              <motion.div variants={itemVariants}>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Full Name
                 </label>
@@ -184,9 +262,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
                   placeholder="Enter your full name"
                   required
                 />
-              </div>
+              </motion.div>
 
-              <div ref={dropdownRef}>
+              <motion.div variants={itemVariants} ref={dropdownRef}>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Role
                 </label>
@@ -209,7 +287,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
                 </button>
 
                 {showRoleDropdown && (
-                  <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg">
+                  <motion.div
+                    className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
                     {["student", "lecturer"].map((role) => (
                       <button
                         key={role}
@@ -227,12 +310,12 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
                         <span className="capitalize">{role}</span>
                       </button>
                     ))}
-                  </div>
+                  </motion.div>
                 )}
-              </div>
+              </motion.div>
 
               {formData.role === "student" && (
-                <div>
+                <motion.div variants={itemVariants}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Student ID
                   </label>
@@ -244,10 +327,10 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
                     placeholder="Enter your student ID"
                     required
                   />
-                </div>
+                </motion.div>
               )}
 
-              <div>
+              <motion.div variants={itemVariants}>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Department {formData.role === "student" ? "(Optional)" : ""}
                 </label>
@@ -258,11 +341,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
                   onChange={handleInputChange}
                   placeholder="Enter your department"
                 />
-              </div>
+              </motion.div>
             </>
           )}
 
-          <div>
+          <motion.div variants={itemVariants}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Email Address
             </label>
@@ -275,9 +358,9 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
               placeholder="Enter your email"
               required
             />
-          </div>
+          </motion.div>
 
-          <div>
+          <motion.div variants={itemVariants}>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Password
             </label>
@@ -304,39 +387,51 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
                 )}
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+            <motion.div
+              className="bg-red-50 border border-red-200 rounded-lg p-3"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+            >
               <p className="text-red-600 text-sm">{error}</p>
-            </div>
+            </motion.div>
           )}
 
-          <button
+          <motion.button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#D496A7] text-white py-3 px-4 rounded-lg transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            variants={itemVariants}
           >
             {isLoading
               ? "Please wait..."
               : isLogin
               ? "Sign In"
               : "Create Account"}
-          </button>
-        </form>
+          </motion.button>
+        </motion.form>
 
-        <div className="mt-6 text-center">
+        <motion.div
+          className="mt-6 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
           <button
             type="button"
             onClick={() => setIsLogin((prev) => !prev)}
-            className="text-indigo-600 hover:text-indigo-700 font-medium"
+            className="text-[#D496A7] font-medium"
           >
             {isLogin
               ? "Don't have an account? Sign up"
               : "Already have an account? Sign in"}
           </button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

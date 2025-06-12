@@ -2,6 +2,7 @@ import React from "react";
 import { Clock, GraduationCap, User, LogOut } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { Profile } from "../types";
+import toast from "react-hot-toast";
 
 interface HeaderProps {
   profile: Profile;
@@ -10,20 +11,31 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ profile, currentTime }) => {
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      toast.loading("Signing out...", {});
+
+      await supabase.auth.signOut();
+
+      toast.success("Signed out successfully", { id: "signout-toast" });
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      toast.error("Error signing out", { id: "signout-toast" });
+      console.error("Sign out error:", error);
+    }
   };
 
   return (
-    <header className="bg-gradient-to-r from-indigo-600 to-purple-700 text-white shadow-lg">
+    <header className="bg-[#D496A7] text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-3">
             <GraduationCap className="h-8 w-8" />
             <div>
               <h1 className="text-xl font-bold">Campus Attendance</h1>
-              <p className="text-sm text-indigo-200">
-                University Management System
-              </p>
+              <p className="text-sm text-white">University Management System</p>
             </div>
           </div>
 
@@ -37,9 +49,7 @@ export const Header: React.FC<HeaderProps> = ({ profile, currentTime }) => {
               <User className="h-5 w-5" />
               <div className="text-right">
                 <p className="text-sm font-medium">{profile.full_name}</p>
-                <p className="text-xs text-indigo-200 capitalize">
-                  {profile.role}
-                </p>
+                <p className="text-xs text-white capitalize">{profile.role}</p>
               </div>
             </div>
 
@@ -50,6 +60,33 @@ export const Header: React.FC<HeaderProps> = ({ profile, currentTime }) => {
               <LogOut className="h-4 w-4" />
               <span className="text-sm">Sign Out</span>
             </button>
+
+            {/* <a
+              href="https://bolt.new"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                width={50}
+                height={50}
+                src="/black_circle.png"
+                alt="Click to visit Bolt"
+                className="absolute top-4 right-4  cursor-pointer transition-transform duration-300 hover:rotate-180"
+              />
+            </a> */}
+            <a
+              href="https://github.com/justify-between"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                width={50}
+                height={50}
+                src="/black_circle.png"
+                alt="Click to visit Bolt"
+                className="absolute top-4 right-4  cursor-pointer transition-transform duration-300 hover:rotate-180"
+              />
+            </a>
           </div>
         </div>
       </div>

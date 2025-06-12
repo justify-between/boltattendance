@@ -17,15 +17,6 @@ createRoot(document.getElementById("root")!).render(
         },
       }}
     />
-    <a href="https://bolt.new" target="_blank" rel="noopener noreferrer">
-      <img
-        width={80}
-        height={80}
-        src="/black_circle.png"
-        alt="Click to visit Bolt"
-        className="absolute bottom-4 right-4 cursor-pointer transition-transform duration-300 hover:rotate-180"
-      />
-    </a>
 
     <App />
   </StrictMode>
