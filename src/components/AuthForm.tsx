@@ -264,7 +264,11 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
                 />
               </motion.div>
 
-              <motion.div variants={itemVariants} ref={dropdownRef}>
+              <motion.div
+                variants={itemVariants}
+                ref={dropdownRef}
+                className="relative"
+              >
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Role
                 </label>
@@ -283,24 +287,31 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
                     )}
                     <span className="capitalize">{formData.role}</span>
                   </div>
-                  <ChevronDown className="h-5 w-5 text-gray-400" />
+                  <motion.div
+                    animate={{ rotate: showRoleDropdown ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronDown className="h-5 w-5 text-gray-400" />
+                  </motion.div>
                 </button>
 
                 {showRoleDropdown && (
                   <motion.div
-                    className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg"
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg overflow-hidden"
+                    initial={{ opacity: 0, y: -10, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: "auto" }}
+                    exit={{ opacity: 0, y: -10, height: 0 }}
+                    transition={{ duration: 0.2 }}
                   >
                     {["student", "lecturer"].map((role) => (
                       <button
                         key={role}
                         type="button"
-                        onClick={() =>
-                          handleRoleSelect(role as "student" | "lecturer")
-                        }
-                        className="w-full flex items-center px-4 py-3 hover:bg-gray-50"
+                        onClick={() => {
+                          handleRoleSelect(role as "student" | "lecturer");
+                          setShowRoleDropdown(false);
+                        }}
+                        className="w-full flex items-center px-4 py-3 hover:bg-gray-50 transition-colors"
                       >
                         {role === "lecturer" ? (
                           <GraduationCap className="h-5 w-5 text-gray-400 mr-3" />
@@ -317,7 +328,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
               {formData.role === "student" && (
                 <motion.div variants={itemVariants}>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Student ID
+                    Matric Number
                   </label>
                   <InputField
                     icon={User}
