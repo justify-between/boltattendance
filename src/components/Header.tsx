@@ -34,7 +34,7 @@ export const Header: React.FC<HeaderProps> = ({ profile, currentTime }) => {
           <div className="flex items-center space-x-3">
             <GraduationCap className="h-8 w-8" />
             <div>
-              <h1 className="text-xl font-bold">Campus Attendance</h1>
+              <h1 className="text-xl font-bold">Bolt Attendance</h1>
               <p className="text-sm text-white">University Management System</p>
             </div>
           </div>
@@ -61,21 +61,8 @@ export const Header: React.FC<HeaderProps> = ({ profile, currentTime }) => {
               <span className="text-sm">Sign Out</span>
             </button>
 
-            {/* <a
-              href="https://bolt.new"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                width={50}
-                height={50}
-                src="/black_circle.png"
-                alt="Click to visit Bolt"
-                className="absolute top-4 right-4  cursor-pointer transition-transform duration-300 hover:rotate-180"
-              />
-            </a> */}
             <a
-              href="https://github.com/justify-between"
+              href="https://bolt.new"
               target="_blank"
               rel="noopener noreferrer"
             >

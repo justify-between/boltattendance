@@ -182,7 +182,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
 
   return (
     <div className="min-h-screen bg-[#F1DEDE] flex items-center justify-center p-4">
-      {/* <motion.a
+      <motion.a
         href="https://bolt.new"
         target="_blank"
         rel="noopener noreferrer"
@@ -197,8 +197,8 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
           alt="Click to visit Bolt"
           className="absolute top-4 right-4 cursor-pointer transition-transform duration-300 hover:rotate-180"
         />
-      </motion.a> */}
-      <motion.a
+      </motion.a>
+      {/* <motion.a
         href="https://github.com/justify-between"
         target="_blank"
         rel="noopener noreferrer"
@@ -213,7 +213,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ onAuthSuccess }) => {
           alt="Click to visit Bolt"
           className="absolute top-4 right-4 cursor-pointer transition-transform duration-300 hover:rotate-180"
         />
-      </motion.a>
+      </motion.a> */}
 
       <motion.div
         className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md"

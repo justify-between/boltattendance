@@ -1,24 +1,27 @@
-import React, { useState } from 'react';
-import { Plus, X, HelpCircle } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import React, { useState } from "react";
+import { Plus, X, HelpCircle } from "lucide-react";
+import { supabase } from "../lib/supabase";
 
 interface CreateLectureFormProps {
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export const CreateLectureForm: React.FC<CreateLectureFormProps> = ({ onClose, onSuccess }) => {
+export const CreateLectureForm: React.FC<CreateLectureFormProps> = ({
+  onClose,
+  onSuccess,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    courseName: '',
-    courseCode: '',
-    startTime: '',
-    endTime: '',
-    date: '',
-    location: '',
-    attendanceQuestion: '',
-    attendanceAnswer: ''
+    courseName: "",
+    courseCode: "",
+    startTime: "",
+    endTime: "",
+    date: "",
+    location: "",
+    attendanceQuestion: "",
+    attendanceAnswer: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,22 +30,22 @@ export const CreateLectureForm: React.FC<CreateLectureFormProps> = ({ onClose, o
     setError(null);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
 
-      const { error } = await supabase
-        .from('lectures')
-        .insert({
-          course_name: formData.courseName,
-          course_code: formData.courseCode,
-          lecturer_id: user.id,
-          start_time: formData.startTime,
-          end_time: formData.endTime,
-          date: formData.date,
-          location: formData.location,
-          attendance_question: formData.attendanceQuestion,
-          attendance_answer: formData.attendanceAnswer.toLowerCase().trim()
-        });
+      const { error } = await supabase.from("lectures").insert({
+        course_name: formData.courseName,
+        course_code: formData.courseCode,
+        lecturer_id: user.id,
+        start_time: formData.startTime,
+        end_time: formData.endTime,
+        date: formData.date,
+        location: formData.location,
+        attendance_question: formData.attendanceQuestion,
+        attendance_answer: formData.attendanceAnswer.toLowerCase().trim(),
+      });
 
       if (error) throw error;
 
@@ -55,10 +58,12 @@ export const CreateLectureForm: React.FC<CreateLectureFormProps> = ({ onClose, o
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -67,7 +72,9 @@ export const CreateLectureForm: React.FC<CreateLectureFormProps> = ({ onClose, o
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Create New Lecture</h2>
+            <h2 className="text-xl font-bold text-gray-900">
+              Create New Lecture
+            </h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -170,9 +177,11 @@ export const CreateLectureForm: React.FC<CreateLectureFormProps> = ({ onClose, o
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex items-center mb-3">
                 <HelpCircle className="h-5 w-5 text-blue-600 mr-2" />
-                <h3 className="font-medium text-blue-900">Attendance Verification</h3>
+                <h3 className="font-medium text-blue-900">
+                  Attendance Verification
+                </h3>
               </div>
-              
+
               <div className="space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-blue-900 mb-1">
@@ -203,7 +212,8 @@ export const CreateLectureForm: React.FC<CreateLectureFormProps> = ({ onClose, o
                     placeholder="e.g., Database normalization"
                   />
                   <p className="text-xs text-blue-600 mt-1">
-                    Students must answer this question correctly to mark attendance
+                    Students must answer this question correctly to mark
+                    attendance
                   </p>
                 </div>
               </div>
@@ -226,10 +236,10 @@ export const CreateLectureForm: React.FC<CreateLectureFormProps> = ({ onClose, o
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50"
+                className="flex-1  text-white py-2 px-4 rounded-lg bg-[#D496A7] transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 <Plus className="h-4 w-4" />
-                <span>{isLoading ? 'Creating...' : 'Create Lecture'}</span>
+                <span>{isLoading ? "Creating..." : "Create Lecture"}</span>
               </button>
             </div>
           </form>

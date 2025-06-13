@@ -158,7 +158,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
         </div>
         <button
           onClick={() => setShowCreateForm(true)}
-          className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+          className="text-white px-6 py-3 rounded-xl bg-[#D496A7] transition-all duration-200 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:scale-105"
         >
           <Plus className="h-5 w-5" />
           <span className="font-medium">Create Lecture</span>
@@ -289,7 +289,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
             <p className="text-gray-600 mb-4">No upcoming lectures scheduled</p>
             <button
               onClick={() => setShowCreateForm(true)}
-              className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200"
+              className=" bg-[#D496A7] text-white px-4 py-2 rounded-lg transition-all duration-200"
             >
               Create Your First Lecture
             </button>
