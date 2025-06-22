@@ -20,7 +20,7 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({ onRoleSelect }) => {
         <div className="space-y-4">
           <button
             onClick={() => onRoleSelect("lecturer")}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 px-6 rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-3"
+            className="w-full  text-white py-4 px-6 rounded-xl bg-[#D496A7]  hover:shadow-xl  transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-3"
           >
             <GraduationCap className="h-6 w-6" />
             <span className="text-lg font-semibold">I'm a Lecturer</span>
@@ -28,7 +28,7 @@ export const RoleSelector: React.FC<RoleSelectorProps> = ({ onRoleSelect }) => {
 
           <button
             onClick={() => onRoleSelect("student")}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 px-6 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-3"
+            className="w-full bg-[#D496A7]  hover:shadow-xl  text-white py-4 px-6 rounded-xl  transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-3"
           >
             <User className="h-6 w-6" />
             <span className="text-lg font-semibold">I'm a Student</span>

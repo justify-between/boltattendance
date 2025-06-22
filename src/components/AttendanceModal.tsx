@@ -162,7 +162,7 @@ export const AttendanceModal: React.FC<AttendanceModalProps> = ({
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50"
+                className="flex-1  text-white py-2 px-4 rounded-lg bg-[#D496A7] hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 <CheckCircle className="h-4 w-4" />
                 <span>{isLoading ? "Submitting..." : "Mark Attendance"}</span>

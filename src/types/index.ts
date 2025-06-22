@@ -2,7 +2,7 @@ export interface Profile {
   id: string;
   email: string;
   full_name: string;
-  role: 'student' | 'lecturer';
+  role: "student" | "lecturer";
   student_id?: string;
   department?: string;
   created_at: string;
@@ -23,6 +23,7 @@ export interface Lecture {
   created_at: string;
   updated_at: string;
   lecturer?: Profile;
+  attendees: Profile[];
   enrollment_count?: number;
   attendance_count?: number;
   is_enrolled?: boolean;
@@ -45,4 +46,4 @@ export interface AttendanceRecord {
   is_correct: boolean;
 }
 
-export type UserRole = 'lecturer' | 'student';
+export type UserRole = "lecturer" | "student";

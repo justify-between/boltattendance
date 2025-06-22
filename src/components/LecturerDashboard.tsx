@@ -139,7 +139,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#d496a7]"></div>
       </div>
     );
   }
@@ -167,15 +167,13 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-xl p-6 shadow-lg">
+        <div className="bg-[#D496A7] transition-all duration-200  text-white rounded-xl p-6 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-indigo-100 text-sm font-medium">
-                Total Lectures
-              </p>
+              <p className="text-white text-sm font-medium">Total Lectures</p>
               <p className="text-2xl font-bold">{lectures.length}</p>
             </div>
-            <BookOpen className="h-8 w-8 text-indigo-200" />
+            <BookOpen className="h-8 w-8 text-white" />
           </div>
         </div>
 
@@ -289,7 +287,7 @@ export const LecturerDashboard: React.FC<LecturerDashboardProps> = ({
             <p className="text-gray-600 mb-4">No upcoming lectures scheduled</p>
             <button
               onClick={() => setShowCreateForm(true)}
-              className=" bg-[#D496A7] text-white px-4 py-2 rounded-lg transition-all duration-200"
+              className=" bg-[#D496A7] text-white px-4 py-2 rounded-lg transition-all duration-200 hover:shadow-xl transform hover:scale-105"
             >
               Create Your First Lecture
             </button>
