@@ -60,7 +60,7 @@ export const Header: React.FC<HeaderProps> = ({ profile, currentTime }) => {
               <LogOut className="h-4 w-4" />
               <span className="text-sm">Sign Out</span>
             </button>
-
+{/* 
             <a
               href="https://bolt.new"
               target="_blank"
@@ -73,7 +73,7 @@ export const Header: React.FC<HeaderProps> = ({ profile, currentTime }) => {
                 alt="Click to visit Bolt"
                 className="absolute top-4 right-4  cursor-pointer transition-transform duration-300 hover:rotate-180"
               />
-            </a>
+            </a> */}
           </div>
         </div>
       </div>
